@@ -7,10 +7,17 @@ const iniitialState = {
     password: "",
     firstNameError: false,
     lastNameError: false,
-    emailError: false,
-    passwordError: false,
+    emailError: 0,
+    passwordError: false   
 }
 
+const errorMessages = [
+      'First Name cannot be Empty', 
+      'Last Name cannot be Empty', 
+      'Email cannot be Empty', 
+      'Looks like this is not an Email',
+      'Password cannot be Empty'
+    ]
 
 const reducer = (state, action) => {
   switch(action.type) {
@@ -20,10 +27,16 @@ const reducer = (state, action) => {
       return {...state, lastname: action.input}
     case 'email':
       return {...state, email: action.value}
-    case 'lastname':
+    case 'password':
       return {...state, password: action.value}
     case 'error1':
       return {...state, firstNameError: action.value}
+    case 'error2':
+      return {...state, lastNameError: action.value}
+    case 'error3':
+      return {...state, emailError: action.value}
+    case 'error4':
+      return {...state, passwordError: action.value}
     default:
       return state
   }
@@ -38,6 +51,7 @@ function App() {
     const input = value.replace(/[^A-Za-z\s]/g, '')
     dispatch({type: fieldName, input})
   }
+
 
   const lastNameHandler = (fieldName, value)=> {
     const input = value.replace(/[^A-Za-z\s]/g, '')
@@ -56,6 +70,18 @@ function App() {
       dispatch({type: fieldName, value})
   }
 
+  const lastNameError = (fieldName, value)=> {
+    dispatch({type: fieldName, value})
+  }
+
+  const emailError = (fieldName, value)=> {
+    dispatch({type: fieldName, value})
+  }
+
+  const passwordError = (fieldName, value)=> {
+    dispatch({type: fieldName, value})
+  }
+
   const submit = (e) => {
     e.preventDefault();
 
@@ -64,51 +90,168 @@ function App() {
     } else {
       firstNameError('error1', false)
     }
+
+    if(state.lastname == '') {
+      lastNameError('error2', true)
+    } else {
+      lastNameError('error2', false)
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if(state.email == '') {
+      emailError('error3', 1)
+    } else if(!emailRegex.test(state.email)) {
+      emailError('error3', 2)
+    } else {
+      emailError('error3', 0)
+    }
+
+    if(state.password == '') {
+      passwordError('error4', true)
+    } else {
+      passwordError('error4', false)
+    }
+
   }
 
   return (
-    <main>
-      <p className="text-[red] text-3xl">{state.firstname}</p>
+    <main className='flex flex-col justify-center items-center px-5 py-10 text-[white] sm:px-[5rem] lg:flex-row lg:gap-5'>
+      {/* <p className="text-[red] text-3xl">{state.firstname}</p>
       <p className="text-[red] text-3xl">{state.lastname}</p>
       <p className="text-[red] text-3xl">{state.email}</p>
-      <p className="text-[red] text-3xl">{state.password}</p>
-      <section>
-        <h1>Learn to code by watching others</h1>
-        <p>See how experienced developers solve problems in real-time. Watching scripted tutorials is great, but understanding how developers think is invaluable</p>
+      <p className="text-[red] text-3xl">{state.password}</p> */}
+      <section className='text-center mb-10 w-full max-w-[500px] lg:w-1/2 lg:text-left'>
+        <h1 className='text-2xl text-center w-[200px] mx-auto font-[700] mb-5 sm:text-[3rem] sm:w-full sm:leading-[3rem] sm:mb-10 lg:px-0 lg:text-left'>Learn to code by watching others</h1>
+        <p className='font-[600]'>See how experienced developers solve problems in real-time. Watching scripted tutorials is great, but understanding how developers think is invaluable</p>
       </section>
-      <section>
-        <div>
-          <p>
-            <span>Try it free 7 days</span>
+      <section className='w-full max-w-[500px] lg:w-1/2'>
+        <div className='mb-7 max-w-[500px]'>
+          <h2 className='text-center py-3 px-[3.5rem] rounded-lg bg-Blue shadow-[0px_8px_0px_0_rgba(0,0,0,0.2)]'>
+            <span className='font-[700]'>Try it free 7 days </span>
             then $22/mo. thereafter
-          </p>
+          </h2>
         </div>
-        <form onSubmit={(e)=> {submit(e)}}>
-          <div className={`border-2 border-[black]${state.firstNameError? ' border-[red]': ''}`}>
-            <input type="text" name="first_name" id="first_name" onChange={(e)=>{namehandler('firstname', e.target.value)}}/>
-            <p></p>
+        <form 
+          onSubmit={(e)=> {submit(e)}} 
+          className='
+            max-w-[500px]
+            bg-[white] rounded-lg
+            px-5 py-7
+            flex
+            flex-col
+            justify-between
+            gap-3
+            lg:p-10
+          '
+          noValidate>
+          <div>
+            <div 
+              className={
+                `flex p-3
+                border-[1px] border-Grayish-Blue
+                text-Dark-Blue font-[700]
+                rounded-md
+                lg:px-6
+                ${state.firstNameError? ' border-[red]': ''}  
+                `}
+            >
+              <input
+                type="text" 
+                name="first_name" 
+                id="first_name" 
+                value={state.firstname} 
+                onChange={(e)=>{namehandler('firstname', e.target.value)}}
+                className='border-none outline-none w-full'
+                placeholder='First Name'
+              /> 
+              <img src="https://raw.githubusercontent.com/RaulTindogan/intro-component-with-signup-form/cf21db77ee8be9ca92feaca2ad457511d7322a30/images/icon-error.svg" alt="Error Icon" 
+                className={`${state.firstNameError? 'ml-3': 'hidden'}`}
+              />
+            </div>
+            <p className='text-Red text-[.8rem] italic font-[600] text-right mb-2'>{state.firstNameError? errorMessages[0]: ''}</p>
           </div>
           <div>
-            <input type="text" name="last_name" id="last_name"  onChange={(e)=>{lastNameHandler('lastname', e.target.value)}}/>
-            <p></p>
+            <div 
+               className={
+                `flex p-3
+                border-[1px] border-Grayish-Blue
+                text-Dark-Blue font-[700]
+                rounded-md
+                lg:px-6
+                ${state.lastNameError? ' border-[red]': ''}`}
+              >
+              <input 
+                type="text" 
+                name="last_name" 
+                id="last_name" 
+                value={state.lastname}  
+                onChange={(e)=>{lastNameHandler('lastname', e.target.value)}}
+                placeholder='Last Name'
+                className='border-none outline-none w-full'
+              />
+              <img src="https://raw.githubusercontent.com/RaulTindogan/intro-component-with-signup-form/cf21db77ee8be9ca92feaca2ad457511d7322a30/images/icon-error.svg" alt="Error Icon" 
+                className={`${state.lastNameError? 'ml-3': 'hidden'}`}
+              />
+            </div>
+            <p className='text-Red text-[.8rem] italic font-[600] text-right mb-2'>{state.lastNameError? errorMessages[1]: ''}</p>
           </div>
           <div>
-            <input type="email" name="email" id="email"  onChange={(e)=>{emailHandler('email', e.target.value)}}/>
-            <p></p>
+            <div className={
+                `flex p-3
+                border-[1px] border-Grayish-Blue
+                text-Dark-Blue font-[700]
+                rounded-md
+                lg:px-6
+                ${state.emailError? ' border-[red]': ''}`}
+              >
+              <input 
+                type="email" 
+                name="email" 
+                id="email" 
+                value={state.email} 
+                onChange={(e)=>{emailHandler('email', e.target.value)}}
+                className='border-none outline-none w-full'
+                placeholder='Email Address'
+              />
+              <img src="https://raw.githubusercontent.com/RaulTindogan/intro-component-with-signup-form/cf21db77ee8be9ca92feaca2ad457511d7322a30/images/icon-error.svg" alt="Error Icon" 
+                className={state.emailError!=0? 'ml-3': 'hidden'}
+              />
+            </div>
+            <p className='text-Red text-[.8rem] italic font-[600] text-right mb-2'>{state.emailError == 1? errorMessages[2] : state.emailError == 2? errorMessages[3]: ''}</p>
           </div>
           <div>
-            <input type="password" name="password" id="password"  onChange={(e)=>{passwordHandler('password', e.target.value)}}/>
-            <p></p>
+            <div  className={
+                `flex p-3
+                border-[1px] border-Grayish-Blue
+                text-Dark-Blue font-[700]
+                rounded-md
+                lg:px-6
+                ${state.passwordError? ' border-[red]': ''}`}
+            >
+              <input 
+                type="password" 
+                name="password" 
+                id="password"  
+                onChange={(e)=>{passwordHandler('password', e.target.value)}}
+                className='border-none outline-none w-full'
+                placeholder='Password'
+              />
+              <img src="https://raw.githubusercontent.com/RaulTindogan/intro-component-with-signup-form/cf21db77ee8be9ca92feaca2ad457511d7322a30/images/icon-error.svg" alt="Error Icon" 
+                className={state.passwordError? 'ml-3': 'hidden'}
+              />
+            </div>
+            <p className='text-Red text-[.8rem] italic font-[600] text-right mb-2'>{state.passwordError? errorMessages[4]: ''}</p>
           </div>
+          <input 
+            type="submit" 
+            value="CLAIM YOUR FREE TRIAL" 
+            className='block cursor-pointer bg-Green rounded-md mb-3 py-3 text-center font-[600] hover:bg-Green/80 shadow-[0px_4px_0px_0_rgba(38,115,82,.6)]' 
+          />
           <div>
-            <input type="submit" value="CLAIM YOUR FREE TRIAL" className='cursor-pointer' />
-          </div>
-          <div>
-            <p>By clicking the button, you are agreeing to our <span>Terms and Services</span></p>
+            <p className='text-Grayish-Blue font-[400] text-sm text-center px-5 lg:px-0'>By clicking the button, you are agreeing to our <span className='text-Red font-[700]'>Terms and Services</span></p>
           </div>
         </form>
-
-        <button onClick={namehandler}>Hello World</button>
       </section>
     </main>
   )
