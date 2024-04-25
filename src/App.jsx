@@ -116,7 +116,7 @@ function App() {
   }
 
   return (
-    <main className='flex flex-col justify-center items-center px-5 py-10 text-[white] sm:px-[5rem] lg:flex-row lg:gap-5'>
+    <main className='min-h-[100vh] flex flex-col justify-center items-center px-5 py-10 text-[white] sm:px-[5rem] lg:flex-row lg:gap-5'>
       {/* <p className="text-[red] text-3xl">{state.firstname}</p>
       <p className="text-[red] text-3xl">{state.lastname}</p>
       <p className="text-[red] text-3xl">{state.email}</p>
