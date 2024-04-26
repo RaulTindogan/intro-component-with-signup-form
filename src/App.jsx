@@ -1,5 +1,6 @@
 import React, { useReducer } from 'react'
 
+// Initial State
 const iniitialState = {
     firstname: "",
     lastname: "",
@@ -11,6 +12,7 @@ const iniitialState = {
     passwordError: false   
 }
 
+// Error Messages Array. I am lazy to type it every inputs
 const errorMessages = [
       'First Name cannot be Empty', 
       'Last Name cannot be Empty', 
@@ -19,6 +21,7 @@ const errorMessages = [
       'Password cannot be Empty'
     ]
 
+// Reducer Function for updating the state
 const reducer = (state, action) => {
   switch(action.type) {
     case 'firstname':
@@ -47,8 +50,15 @@ function App() {
 
   const [state, dispatch] = useReducer(reducer, iniitialState)
 
+  // First Name Handler function, it will run every time the user input at first name input field
+  // It accepts 2 parameter (fieldname and value). 
+  // fieldname is the state that is being editted and value is the value that is set to be the value of fieldname
   const namehandler = (fieldName, value)=> {
+    // Here is input variable. It will filter the input.
+    // It will replace the input if it is not a letter
     const input = value.replace(/[^A-Za-z\s]/g, '')
+
+    // This function will pass the fieldName and input to reducer function.
     dispatch({type: fieldName, input})
   }
 
@@ -82,6 +92,8 @@ function App() {
     dispatch({type: fieldName, value})
   }
 
+  // submit function. It will run if the form is submitted.
+  // It verify the input fields if the input is not valid or empty
   const submit = (e) => {
     e.preventDefault();
 
